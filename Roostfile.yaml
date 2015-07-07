@@ -1,4 +1,4 @@
 name: Tasker
 sources:
   - Tasker.swift
-targetType: module
+target_type: module
