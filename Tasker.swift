@@ -1,23 +1,22 @@
 import Foundation
 
 public class Task {
-  let task: NSTask
+
+  public let task: NSTask
+  public var arguments: [AnyObject] {
+    get { return task.arguments }
+    set { task.arguments = newValue }
+  }
+
   let inputPipe: NSPipe
   let outputPipe: NSPipe
   let errorPipe: NSPipe
 
-  public var arguments: [AnyObject] {
-    get {
-      return task.arguments 
-    }
-    set {
-      task.arguments = newValue
-    }
-  }
-
   var launched: Bool = false
   var exited: Bool = false
 
+  public var outputData:   NSData!
+  public var errorData:    NSData!
   public var outputString: String
   public var errorString:  String
 
@@ -49,14 +48,19 @@ public class Task {
 
     task.waitUntilExit()
 
-    func readPipe(pipe: NSPipe) -> String {
+    func readPipe(pipe: NSPipe) -> NSData {
       let handle = pipe.fileHandleForReading
-      let data = handle.readDataToEndOfFile()
+      return handle.readDataToEndOfFile()
+    }
+    func dataToString(data: NSData) -> String {
       return NSString(data: data, encoding: NSUTF8StringEncoding)! as String
     }
 
-    outputString = readPipe(outputPipe)
-    errorString  = readPipe(errorPipe)
+    outputData = readPipe(outputPipe)
+    errorData  = readPipe(errorPipe)
+
+    outputString = dataToString(outputData!)
+    errorString  = dataToString(errorData!)
 
     exited = true
   }
