@@ -39,21 +39,6 @@ public class Task {
   }
 
   public func launch() {
-    let outputHandle = outputPipe.fileHandleForReading
-    let errorHandle  = errorPipe.fileHandleForReading
-    
-    outputHandle.readabilityHandler = { (handle) in
-      let data = handle.availableData
-      self.outputString += NSString(data: data, encoding: NSUTF8StringEncoding)! as String
-    }
-    errorHandle.readabilityHandler = { (handle) in
-      let data = handle.availableData
-      self.errorString += NSString(data: data, encoding: NSUTF8StringEncoding)! as String 
-    }
-
-    outputHandle.readToEndOfFileInBackgroundAndNotify()
-    errorHandle.readToEndOfFileInBackgroundAndNotify()
-
     task.launch()
 
     launched = true
@@ -63,6 +48,15 @@ public class Task {
     launch()
 
     task.waitUntilExit()
+
+    func readPipe(pipe: NSPipe) -> String {
+      let handle = pipe.fileHandleForReading
+      let data = handle.readDataToEndOfFile()
+      return NSString(data: data, encoding: NSUTF8StringEncoding)! as String
+    }
+
+    outputString = readPipe(outputPipe)
+    errorString  = readPipe(errorPipe)
 
     exited = true
   }
