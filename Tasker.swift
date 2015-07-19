@@ -29,6 +29,11 @@ public class Task {
     outputPipe = NSPipe()
     errorPipe  = NSPipe()
 
+    // Set the pipes on the task
+    task.standardInput  = inputPipe
+    task.standardOutput = outputPipe
+    task.standardError  = errorPipe
+
     outputString = ""
     errorString  = ""
   }
