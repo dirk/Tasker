@@ -26,6 +26,7 @@ public class Task {
 
   public var launched: Bool = false
   public var exited: Bool = false
+  public var exitStatus: Int = -1
 
   public var outputData:   NSData!
   public var errorData:    NSData!
@@ -67,6 +68,7 @@ public class Task {
     errorString  = errorData!.toUTF8String()
 
     exited = true
+    exitStatus = Int(task.terminationStatus)
   }
 
   public func hasAnyOutput() -> Bool {
